@@ -1,0 +1,27 @@
+Before running the "parameter_testing.m" script, there are some steps have to be prepared in initial script:
+
+1. comment "clc; close all; clear; " at first line in "kuka_IMPC_PriController_simulink_initial.m"
+
+2. comment 
+"k_p_lev1 = 1000; 
+k_v_lev1 = 100;
+k_a_lev1 = 1;
+k_e_lev1 = [k_p_lev1;k_v_lev1;k_a_lev1];
+
+Q_const_lev1 = 300; 
+R_const_lev1 = 40;" 
+in "kuka_IMPC_PriController_simulink_initial.m"
+
+3. change "M_bar = ... * 0.5" or "M_bar = ... * 0.2" (I forgot the last factor we tried out yesterday, 0.5 or 0.2) to "M_bar = ... * M_factor"
+
+4. add the scripts named "parameter_testing_Analyze.m" and "parameter_testing.m" into the folder where the simulink file lies in 
+
+5. change the paths in the 3th and 4th line in the "parameter_testing.m" under need
+
+6. change the threashold in the 5th line in "parameter_testing.m" under need
+
+5. execute "parameter_testing.m" script
+
+6. results will be in the subfolder named "parameter_testing_result": 
+for the parameter pairs that performs good are stored in "rmse_error_lessthan0.002" 
+(the 0.002 is also a paramter could be change under need: 5th line in "parameter_testing.m")
