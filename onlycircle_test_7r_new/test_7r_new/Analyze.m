@@ -21,11 +21,11 @@ const_trans2degree = 180/pi;
 
 % Plot degree & degree velocity of joints 
 figure;
-plot(const_trans2degree*q(1:n_plot),'-r'); title('q of link joint');
+plot(const_trans2degree*q(1:n_plot),'-r'); title('link joint position');
 
 
 figure;
-plot(const_trans2degree*qd(1:n_plot),'-r'); title('qd of link joint');
+plot(const_trans2degree*qd(1:n_plot),'-r'); title('link joint velocity');
 
 
 % Plot control signals

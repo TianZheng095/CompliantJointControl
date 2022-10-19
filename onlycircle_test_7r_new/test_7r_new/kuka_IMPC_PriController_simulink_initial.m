@@ -4,7 +4,7 @@
 N = 3;
 Ts = 0.001;
 
-Fe = 0;
+
 % level 1: [x y z] of EE
 k_p_lev1 = 100; 
 k_v_lev1 = 1;
@@ -51,7 +51,7 @@ M_diag = 10;
 M_bar_inv  = inv(M_factor*diag(M_diag));
 
 D_bar_inv = 10;
-K = 5;
+K = 6000;
 
 % load('g_bar.mat', 'g_bar');
 % M_diag = g_bar;
