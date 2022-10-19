@@ -98,7 +98,7 @@ q_max_ref = const_Degree2Rad*q_max_ref;
 
 
 Xr = Get_q_ref(Ts,q_ini, n_ini_stop,n_max_ref, k_e_lev1,q_max_ref);
-Xprime_r_lev1 = Xr{1,1}; X_r_lev1 = Xr{1,2};
+Xprime_r_lev1 = Xr{1,1}; X_r_lev1 = Xr{1,2}; Xd_r_lev1 = Xr{1,3};
 
 %% Inequality constraints
 % joint angle constraints

@@ -2,11 +2,16 @@ function Xr = Get_q_ref(Ts,q_ini, n_ini_stop,n_max_ref, k_e_lev1,q_max_ref)
     %% Compute reference signal 
     t = 0:Ts:Ts*n_max_ref;    
 %     const_trans2degree = 180/pi;
-    omega = (q_max_ref-q_ini)/(Ts*n_max_ref);   
-    
+     
+
     % level 1 reference: link position from 0 to angle_max_lev1
-    X_r_lev1 = q_ini+omega*t;
-    Xd_r_lev1 = omega;
+    T = Ts*n_max_ref;
+    w = (2*pi)/T;
+    phi = -0.5*pi;
+    A = (q_max_ref-q_ini)/2;
+    b = q_ini;
+    X_r_lev1 = A*sin(w*t+phi)+b+A;
+    Xd_r_lev1 = A*w*cos(w*t+phi);
    
     
     Xprime_r_lev1 = k_e_lev1(1)*X_r_lev1+k_e_lev1(2)*Xd_r_lev1;
@@ -18,9 +23,10 @@ function Xr = Get_q_ref(Ts,q_ini, n_ini_stop,n_max_ref, k_e_lev1,q_max_ref)
     Xprime_r_lev1 = [Xprime_r_ini_stop_lev1 Xprime_r_lev1];
     X_r_ini_stop_lev1 = kron(X_r_lev1(:,1),ones(1,n_ini_stop));
     X_r_lev1 = [X_r_ini_stop_lev1 X_r_lev1];
+    Xd_r_ini_stop_lev1 = kron(Xd_r_lev1(:,1),ones(1,n_ini_stop));
+    Xd_r_lev1 = [Xd_r_ini_stop_lev1 Xd_r_lev1];
     
-    
-    Xr = {Xprime_r_lev1, X_r_lev1};
+    Xr = {Xprime_r_lev1, X_r_lev1,Xd_r_lev1};
  
                 
 %     %% Plot
