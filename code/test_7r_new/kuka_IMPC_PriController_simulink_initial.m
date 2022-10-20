@@ -6,16 +6,16 @@ Ts = 0.001;
 
 
 % level 1: [x y z] of EE
-k_p_lev1 = 100; 
+k_p_lev1 = 10; 
 k_v_lev1 = 1;
-% k_a_lev1 = 1;
+
 k_e_lev1 = [k_p_lev1;k_v_lev1];
 
-Q_const_lev1 = 300; 
-R_const_lev1 = 40;
+Q_const_lev1 = 30; 
+R_const_lev1 = 4;
 
 M_factor = 0.3;
-
+D_factor = 0.5;
 
 
 
@@ -46,38 +46,12 @@ theta_ini = const_Degree2Rad*theta_ini;
 % qdd_ini = forwardDynamics(kuka,q_ini,qd_ini,tau_ini);
 tau_ini = 0;
 
-% M_diag = diag(massMatrix(kuka,q_ini));
-M_diag = 10;
-M_bar_inv  = inv(M_factor*diag(M_diag));
 
-D_bar_inv = 10;
-K = 6000;
+M_bar_inv  = inv(M_factor*exJoint.I_l);
 
-% load('g_bar.mat', 'g_bar');
-% M_diag = g_bar;
-% M_bar_inv  = 1*diag([M_diag{1};M_diag{2};M_diag{3};M_diag{4};M_diag{5};M_diag{6};M_diag{7}]);
-% M_bar_inv = diag([1/0.1;1/0.21;1/0.033;1/0.042;1/0.001;1/0.001;1/0.0003]);
-% M_bar_inv = 30*eye(7);
-% M_bar_inv = diag([rand*5+5;rand*3.5+1.3;rand*20.4+9.9;rand*16.2+7.6;rand*913+87;rand*786+214;rand*2283+1050]);
-% M_bar_inv = diag([1/0.1;1/0.21;1/0.033;1/0.042;1/0.001;1/0.001;1/0.0003]);
+D_bar_inv = inv(D_factor*(exJoint.I_m+exJoint.I_g));
+K = exJoint.k_b;
 
-
-% x_ee_ini = q2x(kuka,q_ini,'iiwa_link_ee_kuka');
-% eul_ee_ini = q2eul(kuka,q_ini,'iiwa_link_ee_kuka');
-% Transform_ee_ini = getTransform(kuka,q_ini,'iiwa_link_ee_kuka');
-
-% Nominal state model of Y(k) = [q_bar(k);q_bar(k-1)]
-% A_21 = [eye(7)   Ts*eye(7); 
-%         zeros(7)  2*eye(7)];
-% A_22 = blkdiag(zeros(7),-eye(7));
-% A2_Y = [A_21         A_22;
-%         eye(14) zeros(14)];
-% B2_dtau = [    zeros(7);
-%            Ts*M_bar_inv;
-%             zeros(14,7)];
-%          
-% A2_Y_bar = Formulate_N_PowerMatVector(N, A2_Y);
-% B2_dtau_bar = Formulate_N_RecurMat(N, A2_Y,B2_dtau);
 
 
 %% Reference Trajectory
