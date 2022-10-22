@@ -6,12 +6,12 @@ Ts = 0.001;
 
 
 % level 1: [x y z] of EE
-k_p_lev1 = 10; 
+k_p_lev1 = 100; 
 k_v_lev1 = 1;
 
 k_e_lev1 = [k_p_lev1;k_v_lev1];
 
-Q_const_lev1 = 30; 
+Q_const_lev1 = 3; 
 R_const_lev1 = 4;
 
 M_factor = 0.3;
@@ -78,7 +78,7 @@ Xprime_r_lev1 = Xr{1,1}; X_r_lev1 = Xr{1,2}; Xd_r_lev1 = Xr{1,3};
 % joint angle constraints
 q_max = 100; 
 q_max = const_Degree2Rad*q_max;
-q_min = -10; 
+q_min = -100; 
 q_min = const_Degree2Rad*q_min;
 
 % joint velocity constraints
@@ -92,10 +92,10 @@ qd_min = -qd_max;
 % tau_max = [176;176;110;110;110;40;40];
 % tau_max = 120*ones(7,1);
 % tau_max = [100;100;80;50;50;10;10];
-tau_max = 100;
+tau_max = 1000;
 tau_min = -tau_max;
 
-dtau_max = 10;
+dtau_max = 1000;
 dtau_min = -dtau_max;
 
 tau_max_bar = repmat(tau_max,N,1);
@@ -109,7 +109,7 @@ dtau_min_bar = repmat(dtau_min,N,1);
 %% Parameters used for QP
 % level 1: [x y z] of EE
 A_11_lev1 = [  1  Ts  0; 
-               0  2   M_bar_inv*K*Ts*Ts;
+               0  2-M_bar_inv*K*Ts*Ts   M_bar_inv*K*Ts*Ts;
                0  0   2]; 
 A_12_lev1 = [0,0,0;0,-1,0;0,0,-1];
 A1_X_lev1 = [A_11_lev1   A_12_lev1;
