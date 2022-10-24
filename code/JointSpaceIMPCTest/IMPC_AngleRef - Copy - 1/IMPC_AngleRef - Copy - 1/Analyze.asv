@@ -20,9 +20,9 @@ figure;
 subplot(2,1,1); plot(const_trans2degree*q(1,1:n_plot),'-r'); title('q');
 hold on 
 plot(const_trans2degree*Xr(1,1:n_plot),'-b'); 
-subplot(2,1,2); plot(const_trans2degree*qd(1,1:n_plot),'-r'); title('qd');
+subplot(2,1,1); plot([const_trans2degree*qd(1,1:n_plot),'-r';const_trans2degree*Xr(1,1:n_plot),'-b']); title('qd');
 hold on 
-plot(const_trans2degree*Xr(2,1:n_plot),'-b'); 
+plot(const_trans2degree*Xr(1,1:n_plot),'-b'); 
 
 % Plot control signals
 figure;

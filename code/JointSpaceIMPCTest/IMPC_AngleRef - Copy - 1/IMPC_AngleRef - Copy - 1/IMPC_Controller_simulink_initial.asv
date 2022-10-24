@@ -82,13 +82,13 @@ dtau_max = 2;
 dtau_min = -dtau_max;
 
 tau_max_bar = tau_max*ones((N-1),1);
-tau_min_bar = tau_min*ones((N-1),1);
-dtau_max_bar = dtau_max*ones((N-1),1);
-dtau_min_bar = dtau_min*ones((N-1),1);
+tau_min_bar = tau_min*ones(3*(N-1),1);
+dtau_max_bar = dtau_max*ones(3*(N-1),1);
+dtau_min_bar = dtau_min*ones(3*(N-1),1);
 
 % Matrix representation of inequality constraints
-L1 = [eye(1) zeros(1,3)];
-L2 = [zeros(1,1) eye(1) zeros(1,2)];
+L1 = [eye(3) zeros(3,9)];
+L2 = [zeros(3,3) eye(3) zeros(3,6)];
 
 L1_bar = Formulate_N_BlkdiagMat(N-1, L1); 
 L2_bar = Formulate_N_BlkdiagMat(N-1, L2);
@@ -101,7 +101,7 @@ W2 = L2_bar*B_tilde;
 
 %% Parameters used for qpOASES
 % H
-H_QP = reshape(H,((N-1))^2,1);
+H_QP = reshape(H,(3*(N-1))^2,1);
 
 % lb & ub
 lb_QP = dtau_min_bar;
@@ -120,7 +120,7 @@ ubA_QP_ini = [ repmat(q_max,N-1,1);
                  
                  
 %% Initialization for simulink
-tau_sim_ini = 0;
+tau_sim_ini = [0;0;0];
 q_sim_ini = q_ini;
 q_bar_sim_ini = q_bar_ini;
 
