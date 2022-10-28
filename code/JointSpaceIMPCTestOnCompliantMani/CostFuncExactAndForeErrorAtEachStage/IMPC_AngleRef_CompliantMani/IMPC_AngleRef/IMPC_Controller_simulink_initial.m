@@ -18,10 +18,9 @@ D_bar_inv = inv(D_bar);
 
 
 
-Q_const = 50;
-% R = 0.005;
-R = 0.1;
-Kp = 10;
+% Q_const = 160;
+% R = 0.1;
+% Kp = 40;
 
 
 
