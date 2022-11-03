@@ -1,16 +1,18 @@
-result_path = 'D:\master\master5\dlr\jointSpaceIMPC3DOF\IMPC_AngleRef_CompliantMani\IMPC_AngleRef\parameter_test_results\results_'; %change under need
+clc; close all; clear; 
+result_path = 'D:\master\master5\dlr\jointSpaceIMPC3DOF\IMPC_AngleRef_CompliantMani\IMPC_AngleRef\parameter_test_results_nonlinear\results_'; %change under need
 simulink_path = 'D:\master\master5\dlr\jointSpaceIMPC3DOF\IMPC_AngleRef_CompliantMani\IMPC_AngleRef'; %change under need
-threashold = 6; %change under need
+threashold = 10; %change under need
 
-for ii = 1:20
+
+for ii = 2:20
     %%parameter setting
-    for jj = 1:4
-        for mm = 1:5
-        
+    for jj = 1:20
+        for kk = 1:15
+            
             Q_const = 100*ii;
-            R_const = 1*jj;
-            Kp = 10*mm;
-%             Kp = mm;
+            R_const = 0.1*jj;
+            Kp = kk;
+
         
             %%start simulink and plots saving
             sim("QP_lev2.slx");                                     %%%%run simulink
@@ -30,6 +32,44 @@ for ii = 1:20
                 mkdir(FilePath);                                               %%%%create subfolder
                 cd(FilePath);                                                  %%%%get into subfolder
                 
+                
+                % Load test data
+                load('D:\master\master5\dlr\jointSpaceIMPC3DOF\IMPC_AngleRef_CompliantMani\IMPC_AngleRef\Data\q.mat'); 
+                load('D:\master\master5\dlr\jointSpaceIMPC3DOF\IMPC_AngleRef_CompliantMani\IMPC_AngleRef\Data\qd.mat'); 
+                load('D:\master\master5\dlr\jointSpaceIMPC3DOF\IMPC_AngleRef_CompliantMani\IMPC_AngleRef\Data\T.mat'); 
+                q = q(2:end,:); qd = qd(2:end,:); T = T(2:end,:); 
+                
+                % Basic parameters
+                n_plot = max(size(q));
+                const_trans2degree = 180/pi;
+                
+                % Plot degree & degree velocity of joints & 
+                % figure;
+                f_degree_joints_error = figure(1);
+                % set(f_degree_joints_error,'visible','off');
+                subplot(2,1,1); plot(const_trans2degree*(q(1,1:n_plot)-Xr(1,1:n_plot)),'-r'); title('e of q');
+                subplot(2,1,2); plot(const_trans2degree*(qd(1,1:n_plot)-Xr(2,1:n_plot)),'-r'); title('e of qd');
+                
+                
+                % Plot degree & degree velocity of joints & 
+                % figure;
+                f_degree_joints = figure(2);
+                % set(f_degree_joints,'visible','off');
+                subplot(2,1,1); plot(const_trans2degree*q(1,1:n_plot),'-r'); title('q');
+                hold on 
+                plot(const_trans2degree*Xr(1,1:n_plot),'-b'); 
+                subplot(2,1,2); plot(const_trans2degree*qd(1,1:n_plot),'-r'); title('qd');
+                hold on 
+                plot(const_trans2degree*Xr(2,1:n_plot),'-b'); 
+                
+                % Plot control signals
+                % figure;
+                f_tau = figure(3);
+                % set(f_tau,'visible','off');
+                plot(T(1,1:n_plot),'-b'); title('motor torque');
+
+
+
                 savefig(f_degree_joints_error,'error.fig');                      %%%%reference and real trajectory
                 print(f_degree_joints_error,'-djpeg','error.jpg');
                 

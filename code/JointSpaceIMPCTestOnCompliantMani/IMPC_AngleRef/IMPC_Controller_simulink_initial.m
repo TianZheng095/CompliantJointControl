@@ -26,9 +26,11 @@ D_bar_inv = inv(D_bar);
 
 
 
-Q_const = 600;
-R_const = 0.8;
-Kp = 12;
+Q_const_pos_error= 4000000;
+Q_const_vel_error= 2000;
+Q_const_theta_error = 1000;
+R_const = 50;
+% Kp = 12;
 
 
 
@@ -49,8 +51,9 @@ amp_max = pi/2;
 n_ref_2pi = 5000;
 n_ref_times = 5;
 n_ini_stop = 5000;
+mm = M_bar*(1/(K_b*Ts*Ts));
 
-Xr = Get_X_ref(Ts, n_ini_stop,n_ref_2pi,n_ref_times, plot_ref);
+Xr = Get_X_ref(Ts, n_ini_stop,n_ref_2pi,n_ref_times, plot_ref,mm);
 
 
 %% Parameters used for QP
@@ -75,19 +78,51 @@ A_tilde = Formulate_N_PowerMatVector(N, A);%6Nx6
 B_tilde = Formulate_N_RecurMat(N, A,B);%6NxN
 R_tilde = Formulate_N_BlkdiagMat(N, R_const);%NxN
 
-K_bar = [Kp 0 0 0 0 0;0 1 0 0 0 0];%2x6
-Kd_bar = [Kp 0;0 1];%2x2
 
-U_bar = K_bar'*Q_const*K_bar;%6x6
-Q_tilde = Formulate_N_BlkdiagMat(N, U_bar);%6Nx6N
-
-Ud_bar = Kd_bar'*Q_const*K_bar;%2x6
-QB_tilde = Formulate_N_BlkdiagMat(N, Ud_bar)*B_tilde;%2Nx6N * 6NxN = 2NxN
-AQB_tilde = A_tilde'*Q_tilde*B_tilde;%6xN
+K1_bar = [1 0 0 0 0 0];%1x6
+K2_bar = [0 1 0 0 0 0];%1x6
+K3_bar = [0 0 1 0 0 0];
 
 
-H = R_tilde+B_tilde'*Q_tilde*B_tilde;%NxN
+U1_bar = K1_bar'*Q_const_pos_error*K1_bar;%6x6
+Q1_tilde = Formulate_N_BlkdiagMat(N, U1_bar);%6Nx6N
+U2_bar = K2_bar'*Q_const_vel_error*K2_bar;%6x6
+Q2_tilde = Formulate_N_BlkdiagMat(N, U2_bar);%6Nx6N
+U3_bar = K3_bar'*Q_const_theta_error*K3_bar;%6x6
+Q3_tilde = Formulate_N_BlkdiagMat(N, U3_bar);%6Nx6N
 
+Ud1_bar = Q_const_pos_error*K1_bar;%1x6
+QB1_tilde = Formulate_N_BlkdiagMat(N, Ud1_bar)*B_tilde;%Nx6N * 6NxN = NxN
+AQB1_tilde = A_tilde'*Q1_tilde*B_tilde;%6xN
+Ud2_bar = Q_const_vel_error*K2_bar;%1x6
+QB2_tilde = Formulate_N_BlkdiagMat(N, Ud2_bar)*B_tilde;%Nx6N * 6NxN = NxN
+AQB2_tilde = A_tilde'*Q2_tilde*B_tilde;%6xN
+Ud3_bar = Q_const_theta_error*K3_bar;%1x6
+QB3_tilde = Formulate_N_BlkdiagMat(N, Ud3_bar)*B_tilde;%Nx6N * 6NxN = NxN
+AQB3_tilde = A_tilde'*Q3_tilde*B_tilde;%6xN
+
+
+H = R_tilde+B_tilde'*Q1_tilde*B_tilde+B_tilde'*Q2_tilde*B_tilde+B_tilde'*Q3_tilde*B_tilde;%NxN
+
+
+% %%delta_tau_ref
+% mm = M_bar*(1/(K_b*Ts*Ts));
+% dd = D_bar*(1/Ts);
+% delta_tau_ref_total = [];
+% for j = 3:29996
+%      
+%     theta_r_k_1 = mm*(Xr(2,j+2)-(2-1/mm)*Xr(2,j+1)+Xr(2,j));
+%     theta_r_k_0 = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
+%     theta_r_k__1 = mm*(Xr(2,j)-(2-1/mm)*Xr(2,j-1)+Xr(2,j-2));
+% 
+%     delta_tau_ref = dd*(theta_r_k_1-2*theta_r_k_0+theta_r_k__1);
+%     delta_tau_ref_total = [delta_tau_ref_total;
+%                             delta_tau_ref];
+%           
+% end
+% 
+% delta_tau_ref_total=[0;0;0;delta_tau_ref_total];%one more 0 at beginning for timestamp t=0
+% delta_tau_ref_total(5001:5003)=[0;0;0];
 
 %% Inequality constraints
 % joint angle constraints
@@ -109,9 +144,9 @@ qd_min = -qd_max;
 % joint toruqe constraints
 I_bar = kron(tril(ones(N)),1);%NxN
 
-tau_max = 50;
+tau_max = 200;%50 is too small
 tau_min = -tau_max;
-dtau_max = 2;
+dtau_max = 100;
 dtau_min = -dtau_max;
 
 tau_max_bar = tau_max*ones((N),1);
@@ -182,8 +217,8 @@ B_mani = [0;
 tau_sim_ini = 0;
 q_sim_ini = q_ini;
 q_bar_sim_ini = q_bar_ini;
-theta_sim_ini = q_ini;
-X_bar_sim_ini = [q_bar_sim_ini;theta_sim_ini];
+theta_d_sim_ini = q_ini;
+X_bar_sim_ini = [q_bar_sim_ini;theta_d_sim_ini];
 
 T_run = Ts*(n_ini_stop+n_ref_times*n_ref_2pi-N-5);
 

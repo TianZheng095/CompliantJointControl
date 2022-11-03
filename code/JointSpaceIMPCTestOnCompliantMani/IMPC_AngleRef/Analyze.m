@@ -37,10 +37,10 @@ plot(T(1,1:n_plot),'-b'); title('motor torque');
 
 
 % error = sqrt(mean(const_trans2degree*(q(1,1:n_plot)-Xr(1,1:n_plot)).^2));
-error_max = max(const_trans2degree*(q(1,1:n_plot)-Xr(1,1:n_plot)));
+error_max = max(abs(const_trans2degree*(q(1,1:n_plot)-Xr(1,1:n_plot))));
 
-if error_max<threashold
-    flag = 1;
-else
-    flag = 0;
-end
+% if error_max<threashold
+%     flag = 1;
+% else
+%     flag = 0;
+% end
