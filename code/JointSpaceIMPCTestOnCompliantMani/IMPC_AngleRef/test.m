@@ -33,3 +33,28 @@ figure;
 plot(t_plot,theta_r_k_total);
 hold on
 plot(t_plot,Xr(2,:));
+
+
+
+%% delta_tau_ref
+mm = M_bar*(1/(K_b*Ts*Ts));
+dd = D_bar*(1/Ts);
+delta_tau_ref_total = [];
+for j = 3:29999
+     
+    theta_r_k_1 = mm*(Xr(2,j+2)-(2-1/mm)*Xr(2,j+1)+Xr(2,j));
+    theta_r_k_0 = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
+    theta_r_k__1 = mm*(Xr(2,j)-(2-1/mm)*Xr(2,j-1)+Xr(2,j-2));
+
+    delta_tau_ref = dd*(theta_r_k_1-2*theta_r_k_0+theta_r_k__1);
+    delta_tau_ref_total = [delta_tau_ref_total;
+                            delta_tau_ref];
+          
+end
+
+delta_tau_ref_total=[0;0;delta_tau_ref_total;0;0];%one more 0 at beginning for timestamp t=0
+delta_tau_ref_total(5000:5002)=[0;0;0];
+
+figure;
+plot(t_plot,delta_tau_ref_total);
+

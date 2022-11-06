@@ -10,15 +10,16 @@ Ts = 0.001;
 % I = diag([I_m + I_g, I_l]);
 
 % M_bar = 0.01*exJoint.I_l;
-M_bar = 1;
+M_bar = 0.05;
 % M_bar = I_l;
 M_bar_inv = inv(M_bar);
 % K_b = exJoint.k_b;
-K_b = 100;
+
+K_b = 10000;
 % K_b = 6000;
 % D_bar = exJoint.I_m+exJoint.I_g;
 % D_bar = 0.01*D_bar;
-D_coe = 1;
+D_coe = 0.05;
 D_bar = D_coe*1;
 % D_bar = I_m + I_g;
 D_bar_inv = inv(D_bar);
@@ -26,11 +27,11 @@ D_bar_inv = inv(D_bar);
 
 
 
-Q_const_pos_error= 4000000;
-Q_const_vel_error= 2000;
-Q_const_theta_error = 1000;
-R_const = 50;
-% Kp = 12;
+Q_const_pos_error= 10000;
+Q_const_vel_error= 200;
+Q_const_theta_error = 200;
+R_const = 0.1;
+
 
 
 
@@ -59,6 +60,11 @@ Xr = Get_X_ref(Ts, n_ini_stop,n_ref_2pi,n_ref_times, plot_ref,mm);
 %% Parameters used for QP
 % Nominal state model 
 A1_a22 = 2-M_bar_inv*K_b*Ts*Ts;
+% A1_a32 = D_bar_inv*Ts*Ts;
+% A1_a33 = 2-D_bar_inv*Ts*Ts;
+% A1 = [1    Ts            0;
+%       0   A1_a22   M_bar_inv*K_b*Ts*Ts;
+%       0   A1_a32       A1_a33];
 A1 = [1    Ts            0;
       0   A1_a22   M_bar_inv*K_b*Ts*Ts;
       0    0             2];
@@ -103,26 +109,9 @@ AQB3_tilde = A_tilde'*Q3_tilde*B_tilde;%6xN
 
 
 H = R_tilde+B_tilde'*Q1_tilde*B_tilde+B_tilde'*Q2_tilde*B_tilde+B_tilde'*Q3_tilde*B_tilde;%NxN
+H = 2*H;
 
 
-% %%delta_tau_ref
-% mm = M_bar*(1/(K_b*Ts*Ts));
-% dd = D_bar*(1/Ts);
-% delta_tau_ref_total = [];
-% for j = 3:29996
-%      
-%     theta_r_k_1 = mm*(Xr(2,j+2)-(2-1/mm)*Xr(2,j+1)+Xr(2,j));
-%     theta_r_k_0 = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
-%     theta_r_k__1 = mm*(Xr(2,j)-(2-1/mm)*Xr(2,j-1)+Xr(2,j-2));
-% 
-%     delta_tau_ref = dd*(theta_r_k_1-2*theta_r_k_0+theta_r_k__1);
-%     delta_tau_ref_total = [delta_tau_ref_total;
-%                             delta_tau_ref];
-%           
-% end
-% 
-% delta_tau_ref_total=[0;0;0;delta_tau_ref_total];%one more 0 at beginning for timestamp t=0
-% delta_tau_ref_total(5001:5003)=[0;0;0];
 
 %% Inequality constraints
 % joint angle constraints
@@ -146,7 +135,7 @@ I_bar = kron(tril(ones(N)),1);%NxN
 
 tau_max = 200;%50 is too small
 tau_min = -tau_max;
-dtau_max = 100;
+dtau_max = 50;
 dtau_min = -dtau_max;
 
 tau_max_bar = tau_max*ones((N),1);
@@ -187,31 +176,11 @@ ubA_QP_ini = [ repmat(q_max,N,1);
                        tau_max_bar];
                  
 %% Parameters used for manipulator
-% B_mani = Ts*[0;
-%              0;
-%              0;
-%              D_bar_inv];
 B_mani = [0;
           0;
           0;
           D_bar_inv];
-% g = 9.81;
-% % L = exJoint.len/100/2;
-% L = 1;
-% m = 1;
-% 
-% a21 = -(m*g*L)/M_bar-K_b/M_bar;
-% a23 = K_b/M_bar;
-% a41 = K_b/D_bar;
-% a43 = -K_b/D_bar;
-% % A_mani = eye(4)+Ts*[0     1     0     0;
-% %                     a21   0     a23   0;
-% %                     0     0     0     1;
-% %                     a41   0     a43   0];
-% A_mani = [0     1     0     0;
-%           a21   0     a23   0;
-%           0     0     0     1;
-%           a41   0     a43   0];
+
 
 %% Initialization for simulink
 tau_sim_ini = 0;

@@ -54,7 +54,7 @@ extern "C" {
 
 /* SETTINGS */
 #define SAMPLINGTIME    0.001						/**< Sampling time. */
-#define NCONTROLINPUTS  15							/**< Number of control inputs. */
+#define NCONTROLINPUTS  10							/**< Number of control inputs. */
 #define NWSR            100	    				/**< Maximum number of working set recalculations. */
 
 

@@ -46,7 +46,7 @@ function Xr = Get_X_ref(Ts, n_ini_stop,n_ref_2pi,n_ref_times, plot_ref,mm)
         figure;
         plot(t_plot,rad2deg(Xr(2,:)));     
 
-        figure;
+        hold on
         plot(t_plot,rad2deg(Xr(3,:))); 
 
     end
