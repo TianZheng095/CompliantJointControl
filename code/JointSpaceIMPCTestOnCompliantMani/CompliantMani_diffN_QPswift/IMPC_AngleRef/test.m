@@ -1,0 +1,60 @@
+% i=5000;
+% Xr_d_N = [];
+% for j = 0:k-1
+%    Xr_d_N = [Xr_d_N;
+%              Xr(2,i+j+2:-1:i+j-2)']; 
+%           
+% end
+
+mm = M_bar*(1/(K_b*Ts*Ts));
+% dd = D_bar*(1/Ts);
+% desired_tau_qd = mm*dd*[1,-4+1/mm,6-2/mm,-4+1/mm,1];
+% matrix_uref = kron(eye(k),desired_tau_qd);
+% u_ref = (matrix_uref*Xr_d_N)';
+% matrix_uref_qd = (matrix_uref*Xr_d_N)'*R_const;
+
+
+theta_r_k_total = [];
+for j = 2:30000
+     
+    
+
+    theta_r_k = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
+    theta_r_k_total = [theta_r_k_total;
+                       theta_r_k];
+          
+end
+theta_r_k_total=[0;0;theta_r_k_total];
+theta_r_k_total(5001:5002)=[0;0];
+
+
+t_plot = 0:Ts:Ts*30000;
+figure;
+plot(t_plot,theta_r_k_total);
+hold on
+plot(t_plot,Xr(2,:));
+
+
+
+%% delta_tau_ref
+mm = M_bar*(1/(K_b*Ts*Ts));
+dd = D_bar*(1/Ts);
+delta_tau_ref_total = [];
+for j = 3:29999
+     
+    theta_r_k_1 = mm*(Xr(2,j+2)-(2-1/mm)*Xr(2,j+1)+Xr(2,j));
+    theta_r_k_0 = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
+    theta_r_k__1 = mm*(Xr(2,j)-(2-1/mm)*Xr(2,j-1)+Xr(2,j-2));
+
+    delta_tau_ref = dd*(theta_r_k_1-2*theta_r_k_0+theta_r_k__1);
+    delta_tau_ref_total = [delta_tau_ref_total;
+                            delta_tau_ref];
+          
+end
+
+delta_tau_ref_total=[0;0;delta_tau_ref_total;0;0];%one more 0 at beginning for timestamp t=0
+delta_tau_ref_total(5000:5002)=[0;0;0];
+
+figure;
+plot(t_plot,delta_tau_ref_total);
+
