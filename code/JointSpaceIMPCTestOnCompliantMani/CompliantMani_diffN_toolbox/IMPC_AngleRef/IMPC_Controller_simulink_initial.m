@@ -28,10 +28,20 @@ Q_const_theta_error = 0;
 R_const = 1;
 
 
+var_u = 1e-10;
+var_y = 1e-15;
 
+% % Linear viscous friction
+% d_m = 0.0036;  %% Motor Damping [Nms/rad]
+% d_g = 2.2000;  %% Gearbox damping [Nms/rad]
+% d_l = 1.0000;  %% Torsion bar damping [Nms/rad]
+% 
+% % Linear internal viscous friction
+% d_gl = 1.0000;  %% Torsion bar internal damping [Nms/rad] (not identified)
 
-
-
+d_m_plus_d_g = 2.2036;  
+d_l = 1.0000;  
+d_gl = 1.0000;
 %% Initial set of manipulator
 q_ini = deg2rad(0);
 qd_ini = 0; 

@@ -10,10 +10,11 @@ for ii = 1:10
         for kk = 1:10
             for rr = 1:20
                 
-                Q_const_pos_error= 1000000*ii;
-                Q_const_vel_error= 200*jj;
-                Q_const_theta_error = 100*kk;
-                R_const = 50*rr;
+%                 Q_const_pos_error= 1000000*ii;
+%                 Q_const_vel_error= 200*jj;
+%                 Q_const_theta_error = 100*kk;
+%                 R_const = 50*rr;
+                
     
             
                 %%start simulink and plots saving
