@@ -6,7 +6,7 @@ Nc = 20;
 Ts = 0.001; 
 
 
-M_coe = 0.1;
+M_coe = 0.1;%%0.1
 M_bar = M_coe*1;
 M_bar_inv = inv(M_bar);
 
@@ -15,14 +15,14 @@ Kb_coe = 1;
 K_b = Kb_coe*362;
 
 
-D_coe = 0.1;
+D_coe = 0.1;%%0.1
 D_bar = D_coe*0.598;
 D_bar_inv = inv(D_bar);
 
 
 
 
-Q_const_pos_error= 1000;  %%10
+Q_const_pos_error= 80000;  %%10
 Q_const_vel_error= 1000;%%1000 
 Q_const_theta_error = 0;
 R_const = 0.01;
@@ -43,12 +43,6 @@ d_m_plus_d_g = 0;
 d_l = 0.0000;  
 d_gl = 0.0000;
 
-%% Initial set of manipulator
-q_ini = deg2rad(0);
-qd_ini = 0; 
-q_bar_ini = [q_ini;qd_ini];
-
-tau_ini = 0;  
 
 
 %% Reference Trajectory
@@ -56,17 +50,26 @@ plot_ref = 1;
 
 % amp_max = pi/2;
 n_ref_2pi = 5000;
-n_ref_times = 5;
-n_ini_stop = 5000;
+n_ref_times = 1;
+n_ini_stop = 0;
 mm = M_bar*(1/(K_b*Ts*Ts));
 
 Xr= Get_X_ref(Ts, n_ini_stop,n_ref_2pi,n_ref_times, plot_ref,mm);
 
+%% Initial set of manipulator
+% q_ini = deg2rad(0);
+q_ini = Xr(1,1);
+% qd_ini = 0; 
+qd_ini = Xr(2,1);
+q_bar_ini = [q_ini;qd_ini];
+
+tau_ini = 0;  
 
 %% Parameters used for QP
 % Nominal state model 
 % A1_a12 = Ts*(2-M_bar_inv*K_b*Ts*Ts);
 A1_a12 = Ts;
+% A1_a12 = Ts*2;
 % A1_a13 = Ts*(M_bar_inv*K_b*Ts*Ts);
 A1_a13 = 0;
 A1_a22 = 2-M_bar_inv*K_b*Ts*Ts;
@@ -121,8 +124,8 @@ QB3_tilde = Formulate_N_BlkdiagMat(N, Ud3_bar)*B_tilde;%Nx6N * 6NxN = NxNc
 AQB3_tilde = A_tilde'*Q3_tilde*B_tilde;%6xNc
 
 
-% H = R_tilde+B_tilde'*Q1_tilde*B_tilde+B_tilde'*Q2_tilde*B_tilde+B_tilde'*Q3_tilde*B_tilde;%NxN
-H = R_tilde+B_tilde'*Q1_tilde*B_tilde+B_tilde'*Q2_tilde*B_tilde;%NxN
+H = R_tilde+B_tilde'*Q1_tilde*B_tilde+B_tilde'*Q2_tilde*B_tilde+B_tilde'*Q3_tilde*B_tilde;%NxN
+% H = R_tilde+B_tilde'*Q1_tilde*B_tilde+B_tilde'*Q2_tilde*B_tilde;%NxN
 H = 2*H;
 
 
@@ -147,7 +150,7 @@ qd_min = -qd_max;
 % joint toruqe constraints
 I_bar = kron(tril(ones(Nc)),1);%NxN
 
-tau_max = 200;%50 is too small
+tau_max = 500;%50 is too small
 tau_min = -tau_max;
 dtau_max = 100;
 dtau_min = -dtau_max;
@@ -200,7 +203,7 @@ ubA_QP_ini = [ repmat(q_max,N,1);
 tau_sim_ini = 0;
 q_sim_ini = q_ini;
 q_bar_sim_ini = q_bar_ini;
-theta_d_sim_ini = q_ini;
+theta_d_sim_ini = qd_ini;
 X_bar_sim_ini = [q_bar_sim_ini;theta_d_sim_ini];
 
 T_run = Ts*(n_ini_stop+n_ref_times*n_ref_2pi-N-5);

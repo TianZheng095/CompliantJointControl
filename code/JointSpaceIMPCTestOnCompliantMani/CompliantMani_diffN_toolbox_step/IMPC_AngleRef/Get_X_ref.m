@@ -20,17 +20,23 @@ omg = 2*pi/(Ts*n_ref_2pi);
 
 %% smooth step trajectory
     Tr = 0.2;         % rise time 
-    a = 0.25;  % max value 50*pi/180
+    a = 0.25/2;  % max value 50*pi/180
     t50 = 0.35;      % half rise point 
     dT = 10;
+
+    speed = 18;
     
 %     x1 = @(t)a./(1+exp(-4*(t-t50)/Tr));
 %     x1 = @(t)(t > 0 & t < t50+Tr/2+dT).*a./(1+exp(-4*(t-t50)/Tr))+(t >= t50+Tr/2+dT).*((-a)./(1+exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr))+a);
-    x1 = @(t)(t > 0 & t < dT).*a./(1+exp(-4*(t-t50)/Tr))+(t >= dT).*((-a)./(1+exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr))+a);
+%     x1 = @(t)(t > 0 & t < dT).*a./(1+exp(-4*(t-t50)/Tr))+(t >= dT).*((-a)./(1+exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr))+a);
+%     x1 = @(t)a./(1+exp(-4*(t-t50)/Tr));
+    x1 = @(t)a.*tanh ( speed*(t+0.2)-10 )+a;
 
     joint_ref = x1(t);
-%     x2 = @(t)(4*a*exp(-4*(t-t50)/Tr)/Tr)./((1+exp(-4*(t-t50)/Tr)).^2);\
-    x2 = @(t)(t > 0 & t < t50+Tr/2+dT).*(4*a*exp(-4*(t-t50)/Tr)/Tr)./((1+exp(-4*(t-t50)/Tr)).^2)+(t >= t50+Tr/2+dT).*(-4*a*exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr)/Tr)./((1+exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr)).^2);
+%     x2 = @(t)(4*a*exp(-4*(t-t50)/Tr)/Tr)./((1+exp(-4*(t-t50)/Tr)).^2);
+%     x2 = @(t)(t > 0 & t < t50+Tr/2+dT).*(4*a*exp(-4*(t-t50)/Tr)/Tr)./((1+exp(-4*(t-t50)/Tr)).^2)+(t >= t50+Tr/2+dT).*(-4*a*exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr)/Tr)./((1+exp(-4*(t-(t50+Tr/2+dT)-t50)/Tr)).^2);
+%     x2 = @(t)(t > 0 ).*(4*a*exp(-4*(t-t50)/Tr)/Tr)./((1+exp(-4*(t-t50)/Tr)).^2);
+    x2 = @(t)speed*a.*(1-tanh ( speed*(t+0.2)-10 ).^2);
     joint_d_ref = x2(t);
 
     Xr = [joint_ref;
@@ -56,26 +62,24 @@ omg = 2*pi/(Ts*n_ref_2pi);
 %     Xddr_ini_stop = kron(joint_dd_ref(:,1),ones(1,n_ini_stop));
 %     joint_dd_ref = [Xddr_ini_stop joint_dd_ref];
 
-%% theta_dot reference
+% theta_dot reference
 %     mm = M_bar*(1/(K_b*Ts*Ts));
-%     theta_r_k_total = [];
-%     for j = 2:30000
-%          
-%         
-%     
-%         theta_r_k = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
-%         theta_r_k_total = [theta_r_k_total;
-%                            theta_r_k];
-%               
-%     end
-%     theta_r_k_total=[0;0;theta_r_k_total];
-%     theta_r_k_total(5001:5002)=[0;0];
-%     
-% %     Xr(3:4,2:end) = Xr(3:4,1:end-1);
-% %     Xr(3:4,1) = Xr(3:4,2);
-%     
-%     
-%     Xr = [Xr;theta_r_k_total'];
+    theta_r_k_total = [];
+    for j = 2:n_ref_2pi*n_ref_times+n_ini_stop
+         
+        
+    
+        theta_r_k = mm*(Xr(2,j+1)-(2-1/mm)*Xr(2,j)+Xr(2,j-1));
+        theta_r_k_total = [theta_r_k_total;
+                           theta_r_k];
+              
+    end
+    theta_r_k_total=[0;0;theta_r_k_total];
+    theta_r_k_total(n_ini_stop+1:n_ini_stop+2)=[0;0];
+    
+    
+    
+    Xr = [Xr;theta_r_k_total'];
 
     
     if plot_ref == 1       
