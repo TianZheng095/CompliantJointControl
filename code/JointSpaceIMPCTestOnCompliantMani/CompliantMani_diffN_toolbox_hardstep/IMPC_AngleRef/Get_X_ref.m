@@ -40,9 +40,9 @@ omg = 2*pi/(Ts*n_ref_2pi);
 
 % hard step trajectory
     
-    a = 10*pi/180;
+    a = 0.26;%10*pi/180
    
-    joint_ref = kron(a,ones(1,n_ref_2pi*n_ref_times+1));
+    joint_ref = [kron(a,ones(1,n_ref_2pi*n_ref_times/2+1)),zeros(1,n_ref_2pi*n_ref_times/2)];
     
     joint_d_ref = zeros(size(joint_ref));
 

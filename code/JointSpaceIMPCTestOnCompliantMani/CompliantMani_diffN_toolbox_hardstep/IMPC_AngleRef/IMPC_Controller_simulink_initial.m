@@ -1,12 +1,12 @@
 % clc; close all; clear; 
 
 %% Basic Parameters
-N = 20;
-Nc = 20;
+N = 10;
+Nc = 10;
 Ts = 0.001; 
 
 
-M_coe = 0.1;
+M_coe = 0.04;
 M_bar = M_coe*1;
 M_bar_inv = inv(M_bar);
 
@@ -15,33 +15,33 @@ Kb_coe = 1;
 K_b = Kb_coe*362;
 
 
-D_coe = 0.1;
+D_coe = 0.04;
 D_bar = D_coe*0.598;
 D_bar_inv = inv(D_bar);
 
 
 
 
-Q_const_pos_error= 5000;
-Q_const_vel_error= 10;
+Q_const_pos_error= 900000;%20000 10000
+Q_const_vel_error= 1200;%50 20
 Q_const_theta_error = 0;
-R_const = 0.01;
+R_const = 0.0001;%0.001 0.001
 
 
 var_u = 0;
-var_y = 0;
+var_y = 1e-15;
 
 % % Linear viscous friction
 % d_m = 0.0036;  %% Motor Damping [Nms/rad]
 % d_g = 2.2000;  %% Gearbox damping [Nms/rad]
-% d_l = 1.0000;  %% Torsion bar damping [Nms/rad]
+% d_l = 0.0000;  %% Torsion bar damping [Nms/rad]
 % 
 % % Linear internal viscous friction
-% d_gl = 1.0000;  %% Torsion bar internal damping [Nms/rad] (not identified)
+% d_gl = 0.0000;  %% Torsion bar internal damping [Nms/rad] (not identified)
 
-d_m_plus_d_g = 0;  
-d_l = 0.0000;  
-d_gl = 0.0000;
+d_m_plus_d_g = 2.2036;  
+d_l = 1.0000;  
+d_gl = 1.0000;
 
 %% Initial set of manipulator
 q_ini = deg2rad(0);
@@ -56,8 +56,8 @@ plot_ref = 1;
 
 amp_max = pi/2;
 n_ref_2pi = 5000;
-n_ref_times = 5;
-n_ini_stop = 5000;
+n_ref_times = 1;
+n_ini_stop = 500;
 mm = M_bar*(1/(K_b*Ts*Ts));
 
 Xr= Get_X_ref(Ts, n_ini_stop,n_ref_2pi,n_ref_times, plot_ref,mm);
@@ -140,9 +140,9 @@ qd_min = -qd_max;
 % joint toruqe constraints
 I_bar = kron(tril(ones(Nc)),1);%NxN
 
-tau_max = 200;%50 is too small
+tau_max = 200;%200   %%50 is too small
 tau_min = -tau_max;
-dtau_max = 100;
+dtau_max = 10;%100
 dtau_min = -dtau_max;
 
 tau_max_bar = tau_max*ones((Nc),1);

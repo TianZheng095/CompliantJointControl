@@ -1,12 +1,12 @@
-% clc; close all; clear; 
+clc; close all; clear; 
 
 %% Basic Parameters
-N = 20;
-Nc = 10;
+N = 10;
+Nc = 3;
 Ts = 0.001; 
 
 
-M_coe = 0.1;
+M_coe = 0.01;
 M_bar = M_coe*1;
 M_bar_inv = inv(M_bar);
 
@@ -15,21 +15,21 @@ Kb_coe = 1;
 K_b = Kb_coe*362;
 
 
-D_coe = 0.1;
+D_coe = 0.01;
 D_bar = D_coe*0.598;
 D_bar_inv = inv(D_bar);
 
 
 
 
-Q_const_pos_error= 5000;
-Q_const_vel_error= 100;
+Q_const_pos_error= 8000;
+Q_const_vel_error= 50;
 Q_const_theta_error = 0;
-R_const = 1;
+R_const = 0.01;
 
 
-var_u = 1e-10;
-var_y = 1e-15;
+var_u = 0;
+var_y = 1e-12;%1e-15
 
 % % Linear viscous friction
 % d_m = 0.0036;  %% Motor Damping [Nms/rad]
@@ -122,6 +122,7 @@ H = 2*H;
 % joint angle constraints
 q1_max = deg2rad(114.59); 
 % q1_max = deg2rad(63.03); 
+% q1_max = deg2rad(50); 
 
 
 q_max = q1_max;
@@ -130,7 +131,7 @@ q_min = -q_max;
 % joint velocity constraints
 qd1_max = deg2rad(114.59); 
 % qd1_max = deg2rad(45.84); 
-
+% qd1_max = deg2rad(30); 
 
 qd_max = qd1_max;
 qd_min = -qd_max;
@@ -138,9 +139,9 @@ qd_min = -qd_max;
 % joint toruqe constraints
 I_bar = kron(tril(ones(Nc)),1);%NxN
 
-tau_max = 200;%50 is too small
+tau_max = 2.4;%50 is too small
 tau_min = -tau_max;
-dtau_max = 50;
+dtau_max = 1;
 dtau_min = -dtau_max;
 
 tau_max_bar = tau_max*ones((Nc),1);
