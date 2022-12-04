@@ -37,6 +37,13 @@ f_tau = figure(3);
 % set(f_tau,'visible','off');
 plot(T(1,1:n_plot),'-b'); title('motor torque');
 
+
+load('UsingTime_IMPC_Np10_Nc3.mat'); 
+time = figure(4);
+% set(time,'visible','off');
+time_n_plot = max(size(UsingTime_IMPC_Np10_Nc3));
+plot(UsingTime_IMPC_Np10_Nc3(2,2:time_n_plot));title('computing time');
+
 % 
 % 
 % % error = sqrt(mean(const_trans2degree*(q(1,1:n_plot)-Xr(1,1:n_plot)).^2));

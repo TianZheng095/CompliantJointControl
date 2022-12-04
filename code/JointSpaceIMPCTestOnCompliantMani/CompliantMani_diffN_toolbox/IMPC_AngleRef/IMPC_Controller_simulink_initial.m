@@ -1,7 +1,7 @@
 clc; close all; clear; 
 
 %% Basic Parameters
-N = 10;
+N = 3;
 Nc = 3;
 Ts = 0.001; 
 
@@ -139,7 +139,7 @@ qd_min = -qd_max;
 % joint toruqe constraints
 I_bar = kron(tril(ones(Nc)),1);%NxN
 
-tau_max = 2.4;%50 is too small
+tau_max = 3;%50 is too small
 tau_min = -tau_max;
 dtau_max = 1;
 dtau_min = -dtau_max;

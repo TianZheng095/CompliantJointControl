@@ -1,7 +1,7 @@
 clc; close all; clear; 
 
 %% Basic Parameters
-N = 10;
+N = 3;
 Nc = 3;
 Ts = 0.001; 
 
