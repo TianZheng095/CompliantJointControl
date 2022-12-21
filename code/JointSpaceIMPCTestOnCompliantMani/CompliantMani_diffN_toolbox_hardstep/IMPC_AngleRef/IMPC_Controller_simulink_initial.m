@@ -1,12 +1,12 @@
 % clc; close all; clear; 
 
 %% Basic Parameters
-N = 10;
-Nc = 10;
+N = 20;
+Nc = 20;
 Ts = 0.001; 
 
 
-M_coe = 0.04;
+M_coe = 0.1;
 M_bar = M_coe*1;
 M_bar_inv = inv(M_bar);
 
@@ -15,21 +15,21 @@ Kb_coe = 1;
 K_b = Kb_coe*362;
 
 
-D_coe = 0.04;
+D_coe = 0.2;
 D_bar = D_coe*0.598;
 D_bar_inv = inv(D_bar);
 
 
 
 
-Q_const_pos_error= 900000;%20000 10000
-Q_const_vel_error= 1200;%50 20
+Q_const_pos_error= 5000;%20000 10000
+Q_const_vel_error= 10;%50 20
 Q_const_theta_error = 0;
-R_const = 0.0001;%0.001 0.001
+R_const = 0.00001;%0.001 0.001
 
 
 var_u = 0;
-var_y = 1e-15;
+var_y = 0;
 
 % % Linear viscous friction
 % d_m = 0.0036;  %% Motor Damping [Nms/rad]
